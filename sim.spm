@@ -1,0 +1,883 @@
+Standard MakerPlot Interface
+SelmaWare Solutions
+7/23/2012
+Rev 1.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INIT:
+
+'Set as default macro
+!DEFM (ME)
+' Start a new plot
+!NEWP
+' Hide interface while building
+!HIDE
+' Title plot
+!TITL 
+' Run objects macro
+!MACR .OBJECTS
+' Use entire form for saves/printing
+!FORM ON
+' Message file name
+!NAMM std_msg.txt
+' Data File name
+!NAMD std_dat.txt
+' Take auto-snapshots
+!ASNP ON
+' Auto based on time
+!AUTT
+' Set Queue size
+!QSIZ 22651
+' Set analog span
+!SPAN  0, 5
+' Set max time
+!TMAX 36000
+' Set X label
+!XLBL Time
+' Set time Divisor
+!TDIV  60
+' Set Y Label
+!YLBL VOLTAGE
+' Set number of data points
+!PNTS 3000
+' Stop at Max points
+!MAXS
+' Stop at max time
+!MAXT
+' Clear min/max on reset
+!CMMR ON
+' Flush old data
+!FLSH ON
+' Set max shift amount
+!SAMT  25
+' Show real time
+!RTIM ON
+' Set number of grid lines X and Y
+!GRID  20, 20
+' Populate drpComm with port numbers
+!POBJ drpComm.clear
+!POBJ drpComm.List=(PORTS)
+' Set display information
+!DISP D9 G2 A0 S0 B15 R
+' Save data values (if not default)
+!SETD 20,Hours
+!SETD 21,60
+!SETD 22,1
+
+' Set analog width
+!AWTH  3
+
+' Set individual channel colors
+!ACLR  1, 12
+
+' Scale and offset individual channels
+
+' Set inactive analog channels channels
+
+
+' Done building, Show interface
+!SHOW
+!MACR .DCONST
+ENDMAC
+
+OBJECTS:
+!POBJ Clear
+!PPER 70,80
+
+' Set Back Color ******** 
+!POBJ oBack=backs\black-red-leather.jpg
+'   lbl_58 -- OLABEL *****
+!POBJ oLabel.lbl_58=84.,63.3,18.,3.,Arduino Time,7,15,8,0
+!POBJ lbl_58.F=Arial,8,1,0,0
+
+'   dField -- OTEXT *****
+!POBJ oText.dField=86.3,5.8,5.,4.1, ,&H80FFFF,0,6
+!POBJ dField.F=Arial,6,1,0,0
+!POBJ dField.tip=Enter leading zero if necessary. E.g. 0.61 instead of .61
+
+'   tField -- OTEXT *****
+!POBJ oText.tField=92.3,5.8,5.,4.1, ,&H80FFFF,0,6
+!POBJ tField.F=Arial,6,1,0,0
+
+'   dpoint -- OTEXT *****
+!POBJ oText.dpoint=86.3,11.5,5.,4.1,  ,&H80FFFF,0,8
+!POBJ dpoint.F=Arial,8,0,0,0
+!POBJ dpoint.tip=dpoint
+
+'   ptsPct -- OTEXT *****
+!POBJ oText.ptsPct=92.3,11.5,5.,4.1,  ,&H80FFFF,0,8
+!POBJ ptsPct.F=Arial,8,0,0,0
+!POBJ ptsPct.tip=ptsPct
+
+'   lbl_58_63 -- OLABEL *****
+!POBJ oLabel.lbl_58_63=72.8,11.4,18.,5.,DPOINT\n ( # / Pct ),7,15,6,0
+!POBJ lbl_58_63.F=Arial,6,0,0,0
+!POBJ lbl_58_63.tip=Data points currently held in memory.
+
+'   lbl_58_63_64 -- OLABEL *****
+!POBJ oLabel.lbl_58_63_64=71.6,16.3,18.,3.,Plot Start Time,7,15,6,0
+!POBJ lbl_58_63_64.F=Arial,6,0,0,0
+
+'   lblComm -- OLABEL *****
+!POBJ oLabel.lblComm=4.7,19.,14.,4.,Control,7,15,8,0
+!POBJ lblComm.F=Arial,8,1,0,0
+
+'   drpComm -- ODROP *****
+!POBJ oDrop.drpComm=0.5,15.,4.,4.,8, 6
+!POBJ drpComm.F=Arial,8,0,0,0
+!POBJ drpComm.Index=1
+!POBJ drpComm.tip=Selects the COM port to use
+'-- Event Code
+!POBJ drpComm.C=' Disconnect if changed(;)
+!BELL(;)
+!IFTH (objComm),==,1,!CONN OFF(;)
+'   drpBaud -- ODROP *****
+
+
+'   drpBaud -- ODROP *****
+!POBJ oDrop.drpBaud=5.,15.,6.,4.,8,300,1200,2400,4800,9600,14400,19200,38400,56000,115200,9600
+!POBJ drpBaud.F=Arial,8,0,0,0
+!POBJ drpBaud.Index=10
+!POBJ drpBaud.tip=Selects the Baud rate to use
+'-- Event Code
+!POBJ drpBaud.C=' Disconnect if changed(;)
+!BELL(;)
+!IFTH (objComm),==,1,!CONN OFF
+
+
+'   butReset -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butReset=15.5,15.,7.,4.,Reset Plot,0,dev\pb-sw\pb_grn_0.gif,dev\pb-sw\pb_grn_1.gif,MOMENTARY,1
+!POBJ butReset.Font Size=6
+!POBJ butReset.Font Color=&HFFFFFF
+!POBJ butReset.Sound=sounds\sw_tick3.wav
+'-- Event Code
+!POBJ butReset.C=' Reset Plot(;)
+!RSET
+
+
+'   butResetAxis -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butResetAxis=15.5,10.2,7.,4.,Reset Axis,0,dev\pb-sw\pb_grn_0.gif,dev\pb-sw\pb_grn_1.gif,Momentary,1
+!POBJ butResetAxis.Font Size=6
+!POBJ butResetAxis.Font Color=&HFFFFFF
+!POBJ butResetAxis.Sound=sounds\sw_tick3.wav
+!POBJ butResetAxis.tip=Set Axis to current user settings
+'-- Event Code
+!POBJ butResetAxis.C=' Reset Y(;)
+!SPAN (txtYmin),(txtYmax)(;)
+!TMIN 0(;)
+!TMAX (txtXmax)
+
+
+'   lblPoints -- OLABEL *****
+!POBJ oLabel.lblPoints=6.8,3.9,12.,3.9,Data Point Storage Size:,7,15,6,0
+!POBJ lblPoints.F=Arial,6,0,0,0
+
+'   txtDpoints -- OTEXT *****
+!POBJ oText.txtDpoints=18.8,4.4,3.8,4.1,3000,15,0,7
+!POBJ txtDpoints.F=Arial,7,0,0,0
+!POBJ txtDpoints.tip=Higher number of points requires longer to redraw 
+'-- Event Code
+!POBJ txtDpoints.C=!PNTS ((ME))(;)
+!BELL
+
+
+'   butPorts -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butPorts=0.6,10.3,10.3,4.5,Reload Ports,0,dev\pb-sw\pb_blu_0.gif,dev\pb-sw\pb_blu_1.gif,MOMENTARY,1
+!POBJ butPorts.Font Size=6
+!POBJ butPorts.Font Color=&HFFFFFF
+!POBJ butPorts.Sound=sounds\sw_tick2.wav
+!POBJ butPorts.tip=Loads available COM ports
+'-- Event Code
+!POBJ butPorts.C=' Turn off connection(;)
+!POBJ objComm=0(;)
+!CONN OFF(;)
+!PLOT OFF(;)
+' Clear and reload list(;)
+!POBJ drpComm.Clear(;)
+!POBJ drpComm.List=(PORTS)
+
+
+'   Obj16 -- OLABEL *****
+!POBJ oLabel.Obj16=23.5,19.,0.5,18., ,14,0,8,1
+!POBJ Obj16.F=Arial,8,0,0,0
+
+'   lblXAxis -- OLABEL *****
+!POBJ oLabel.lblXAxis=50.5,19.,7.,4.,X-Axis,7,15,8,0
+!POBJ lblXAxis.F=Arial,8,1,0,0
+
+'   lblXMax -- OLABEL *****
+!POBJ oLabel.lblXMax=42.8,14.8,5.,3.,Max:,7,15,8,0
+!POBJ lblXMax.F=Arial,8,0,0,0
+
+'   txtXmax -- OTEXT *****
+!POBJ oText.txtXmax=47.,15.,4.8,4.1,600,15,0,7
+!POBJ txtXmax.F=Arial,7,0,0,0
+!POBJ txtXmax.tip=Sets the maximum value on X axis based on time choice
+'-- Event Code
+!POBJ txtXmax.C=!TMAX ((ME))(;)
+!BELL
+
+
+'   butRealTime -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butRealTime=44.,5.7,8.,4.,Real Time,1,dev\pb-sw\pb_yel_0.gif,dev\pb-sw\pb_grn_1.gif,ON-OFF,1
+!POBJ butRealTime.Value=1
+!POBJ butRealTime.Font Size=6
+!POBJ butRealTime.Font Color=&H000000
+!POBJ butRealTime.Sound=sounds\sw_tock2.wav
+'-- Event Code
+!POBJ butRealTime.C=' Control real time scale(;)
+!RTIM ((ME))
+
+
+'   butHr -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butHr=44.,10.3,2.5,4.,HR,0,dev\pb-sw\pb_yel_0.gif,dev\pb-sw\pb_grn_1.gif,ON-OFF,1
+!POBJ butHr.Font Size=6
+!POBJ butHr.Font Color=&H000000
+!POBJ butHr.Sound=sounds\sw_click.wav
+!POBJ butHr.tip=Sets the X-axis for hours
+'-- Event Code
+!POBJ butHr.C=' Stay on if clicked again(;)
+!POBJ (ME)=1(;)
+' off other buttons(;)
+!POBJ butMin=0(;)
+!POBJ butSec=0(;)
+' 3600 sec/hr(;)
+!TDIV 3600(;)
+' Turn off Real Time(;)
+!POBJ butRealTime = 0(;)
+!RTIM OFF(;)
+' Label Axis and turn off real time(;)
+!XLBL Hours(;)
+' Calculate max time and save TDIV for next change(;)
+!POBJ txtXMax=[(GETD22) * (GETD21) / (TDIV)](;)
+!SETD 22,(txtXMax)(;)
+!POBJ txtXMax = [(txtXMax) FORMAT 0.00](;)
+!SETD 21,(TDIV)
+
+
+'   butMin -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butMin=46.7,10.3,2.5,4.,MIN,1,dev\pb-sw\pb_yel_0.gif,dev\pb-sw\pb_grn_1.gif,ON-OFF,1
+!POBJ butMin.Value=1
+!POBJ butMin.Font Size=5
+!POBJ butMin.Font Color=&H000000
+!POBJ butMin.Sound=sounds\sw_tock2.wav
+!POBJ butMin.tip=Sets the X-axis for minutes
+'-- Event Code
+!POBJ butMin.C=' Stay on if clicked again(;)
+!POBJ (ME)=1(;)
+' Release other buttons(;)
+!POBJ butHr=0(;)
+!POBJ butSec=0(;)
+' 60 sec/hr(;)
+!TDIV 60(;)
+' Turn off Real Time(;)
+!POBJ butRealTime =0(;)
+!RTIM OFF(;)
+' Label Axis and turn of real time(;)
+!XLBL Minutes(;)
+' Calculate max time and save TDIV for next change(;)
+!POBJ txtXMax=[(GETD22) * (GETD21) / (TDIV)](;)
+!SETD 22,(txtXMax)(;)
+!POBJ txtXMax = [(txtXMax) FORMAT 0.00](;)
+!SETD 21,(TDIV)
+
+
+'   butSec -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butSec=49.4,10.3,2.5,4.,SEC,0,dev\pb-sw\pb_yel_0.gif,dev\pb-sw\pb_grn_1.gif,ON-OFF,1
+!POBJ butSec.Font Size=5
+!POBJ butSec.Font Color=&H000000
+!POBJ butSec.Sound=sounds\sw_click.wav
+!POBJ butSec.tip=Sets the X-axis for seconds
+'-- Event Code
+!POBJ butSec.C=' Stay on if clicked again(;)
+!POBJ (ME)=1(;)
+' Release other buttons(;)
+!POBJ butHr=0(;)
+!POBJ butMin=0(;)
+'  1 second / second(;)
+!TDIV 1(;)
+' Turn off Real Time(;)
+!POBJ butRealTime = 0(;)
+!RTIM OFF(;)
+' Label Axis and turn off real time(;)
+!XLBL Seconds(;)
+' Calculate max time and save TDIV for next change(;)
+!POBJ txtXMax=[(GETD22) * (GETD21) / (TDIV)](;)
+!SETD 22,(txtXMax)(;)
+!POBJ txtXMax = [(txtXMax) FORMAT 0.00](;)
+!SETD 21,(TDIV)
+
+
+'   lblShiftAmt -- OLABEL *****
+!POBJ oLabel.lblShiftAmt=52.7,14.8,5.,3.,Shift%,7,15,8,0
+!POBJ lblShiftAmt.F=Arial,8,0,0,0
+
+'   drpShiftAmt -- ODROP *****
+!POBJ oDrop.drpShiftAmt=58.,15.,4.,3.3,6,5,10,15,20,30,40,50,75,95,25
+!POBJ drpShiftAmt.F=Arial,6,0,0,0
+!POBJ drpShiftAmt.Index=10
+!POBJ drpShiftAmt.tip=Sets the amount to shift the plot when at maximum time
+'-- Event Code
+!POBJ drpShiftAmt.C=' set amount to shift when at max time(;)
+!SAMT ((ME))(;)
+!BELL
+
+
+'   butShiftMax -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butShiftMax=56.,10.3,6.,4.,Shift Max,0,dev\pb-sw\pb_yel_0.gif,dev\pb-sw\pb_grn_1.gif,ON-OFF,1
+!POBJ butShiftMax.Font Size=6
+!POBJ butShiftMax.Font Color=&H000000
+!POBJ butShiftMax.Sound=sounds\sw_tock2.wav
+!POBJ butShiftMax.tip=Controls if plot shifts at maximim
+'-- Event Code
+!POBJ butShiftMax.C=' set plot shift to button's value(;)
+!SHFT ((ME))(;)
+' if on, maximum based on points(;)
+!IFTH ((ME)),==,1,!MAXP(CR)!MAXR(CR)!POBJ butStop.V=0(CR)!POBJ butStop=0(CR)!Plot On(;)
+' if off, max based on time(;)
+!IFTH ((ME)),==,0,!MAXT(CR)!POBJ butStop.V=1
+
+
+'   butStop -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butStop=56.,5.4,6.,4.,Stop Max,1,dev\pb-sw\pb_yel_0.gif,dev\pb-sw\pb_grn_1.gif,ON-OFF,1
+!POBJ butStop.Value=1
+!POBJ butStop.Font Size=6
+!POBJ butStop.Font Color=&H000000
+!POBJ butStop.Sound=sounds\sw_tock2.wav
+!POBJ butStop.tip=Sets whether to stop or reset at maximum
+'-- Event Code
+!POBJ butStop.C=' set stopping based on value of button(;)
+!IFTH ((ME)),=,1,!MAXS(;)
+!IFTH ((ME)),=,0,!MAXR(CR)!PLOT ON
+
+
+'   butIncX -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butIncX=52.3,10.3,3.5,4.,Dbl,0,dev\pb-sw\pb_yel_0.gif,dev\pb-sw\pb_grn_1.gif,ON-OFF,1
+!POBJ butIncX.Font Size=5
+!POBJ butIncX.Font Color=&H000000
+!POBJ butIncX.Sound=sounds\sw_tock2.wav
+!POBJ butIncX.tip=Doubles the time of the plot
+'-- Event Code
+!POBJ butIncX.C=' Double X axis(;)
+!DBLX
+
+
+'   butDecX -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butDecX=52.3,5.5,3.5,4.,Half,1,dev\pb-sw\pb_yel_0.gif,dev\pb-sw\pb_grn_1.gif,ON-OFF,1
+!POBJ butDecX.Value=1
+!POBJ butDecX.Font Size=5
+!POBJ butDecX.Font Color=&H000000
+!POBJ butDecX.Sound=sounds\sw_tock2.wav
+!POBJ butDecX.tip=Halve the time of the plot
+'-- Event Code
+!POBJ butDecX.C=' Halve x axis(;)
+!HLVX
+
+
+'   Obj16? -- OLABEL *****
+!POBJ oLabel.Obj16?=63.2,19.,0.5,18., ,14,0,8,1
+!POBJ Obj16?.F=Arial,8,0,0,0
+
+'   lblLogging -- OLABEL *****
+!POBJ oLabel.lblLogging=67.2,19.2,7.,4.,Logging,7,15,8,0
+!POBJ lblLogging.F=Arial,8,1,0,0
+
+'   butLog -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butLog=66.3,15.4,9.,4.,Log to File,0,dev\pb-sw\pb_yel_0.gif,dev\pb-sw\pb_grn_1.gif,ON-OFF,1
+!POBJ butLog.Font Size=6
+!POBJ butLog.Font Color=&H000000
+!POBJ butLog.Sound=sounds\sw_tock2.wav
+!POBJ butLog.tip=Enables logging of data to file for use in other ways
+'-- Event Code
+!POBJ butLog.C=' name data file(;)
+!NAMD (txtDat)(;)
+' name message file(;)
+!NAMM (txtMsg)(;)
+'enable data logging(;)
+!SAVD ((ME))(;)
+' enable message logging(;)
+!SAVM ((ME))
+
+
+'   txtDat -- OTEXT *****
+!POBJ oText.txtDat=64.7,10.7,7.,3.6,std_dat.txt,15,0,6
+!POBJ txtDat.F=Arial,6,0,0,0
+!POBJ txtDat.tip=Name of file to log to
+'-- Event Code
+!POBJ txtDat.C=!NAMD ((ME))(;)
+!BELL
+
+
+'   txtMsg -- OTEXT *****
+!POBJ oText.txtMsg=64.7,6.7,7.,3.6,std_msg.txt,15,0,6
+!POBJ txtMsg.F=Arial,6,0,0,0
+!POBJ txtMsg.tip=Name of file to log message to 
+'-- Event Code
+!POBJ txtMsg.C=!NAMM ((ME))(;)
+!BELL
+
+
+'   lbllog -- OLABEL *****
+!POBJ oLabel.lbllog=63.,3.,12.,4.,.txt or .csv required,7,14,6,0
+!POBJ lbllog.F=Arial,6,0,0,0
+
+'   butOpenDat -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butOpenDat=73.1,10.8,4.,4.,Open,0,dev\pb-sw\pb_grn_0.gif,dev\pb-sw\pb_grn_1.gif,MOMENTARY,1
+!POBJ butOpenDat.Font Size=6
+!POBJ butOpenDat.Font Color=&HFFFFFF
+!POBJ butOpenDat.Sound=sounds\sw_tick3.wav
+!POBJ butOpenDat.tip=Opens the data log file
+'-- Event Code
+!POBJ butOpenDat.C=' name the data file(;)
+!NAMD (txtDat)(;)
+' Open data file(;)
+!OPND
+
+
+'   butOpenMsg -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butOpenMsg=73.1,6.8,4.,4.,Open,0,dev\pb-sw\pb_grn_0.gif,dev\pb-sw\pb_grn_1.gif,MOMENTARY,1
+!POBJ butOpenMsg.Font Size=6
+!POBJ butOpenMsg.Font Color=&HFFFFFF
+!POBJ butOpenMsg.Sound=sounds\sw_tick3.wav
+!POBJ butOpenMsg.tip=Opens the message log file
+'-- Event Code
+!POBJ butOpenMsg.C=' Name msg file(;)
+!NAMM (txtMsg)(;)
+' Open Msg file(;)
+!OPNM
+
+
+'   butSnap -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butSnap=89.5,83.3,8.,4.,Snapshot,0,dev\pb-sw\pb_grn_0.gif,dev\pb-sw\pb_grn_1.gif,MOMENTARY,1
+!POBJ butSnap.Font Size=6
+!POBJ butSnap.Font Color=&HFFFFFF
+!POBJ butSnap.Sound=sounds\sw_tick3.wav
+!POBJ butSnap.tip=Take an image of interface
+'-- Event Code
+!POBJ butSnap.C=' Play sound(;)
+~PWAV Stapler(;)
+' Append date/time(;)
+!APDT ON(;)
+' entire form (not just plot)(;)
+!FORM ON(;)
+' take snapshot based on plot name(;)
+!SNAP (TITLE)
+
+
+'   butView -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butView=89.5,77.7,8.,4.,View Snap,0,dev\pb-sw\pb_grn_0.gif,dev\pb-sw\pb_grn_1.gif,MOMENTARY,1
+!POBJ butView.Font Size=6
+!POBJ butView.Font Color=&HFFFFFF
+!POBJ butView.Sound=sounds\sw_tick3.wav
+!POBJ butView.tip=View Snapshot
+'-- Event Code
+!POBJ butView.C=' Open snapshot with associated program(;)
+!APPA (SNAP)
+
+
+'   butFolder -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.butFolder=89.5,72.2,8.,4.,Open Folder,0,dev\pb-sw\pb_grn_0.gif,dev\pb-sw\pb_grn_1.gif,MOMENTARY,1
+!POBJ butFolder.Font Size=6
+!POBJ butFolder.Font Color=&HFFFFFF
+!POBJ butFolder.Sound=sounds\stapler.wav
+!POBJ butFolder.tip=Opens Snapshot folder
+'-- Event Code
+!POBJ butFolder.C=' opens folder(;)
+!FLDR (SPATH)
+
+
+'   Obj16?? -- OLABEL *****
+!POBJ oLabel.Obj16??=89.,20.6,8.,0.5, ,14,0,8,1
+!POBJ Obj16??.F=Arial,8,0,0,0
+
+'   Obj16?? -- OLABEL *****
+!POBJ oLabel.Obj16??=42.8,19.,0.5,18., ,14,0,8,1
+!POBJ Obj16??.F=Arial,8,0,0,0
+
+'   objComm -- OIMGBUT *****
+!POBJ oImgBut.objComm=11.9,15.,3.,9.,dev\rocker-sw\rockerSW_red_0.gif,0,dev\rocker-SW\RockerSW_Grn_1.gif,0
+!POBJ objComm.tip=Connects and Plots
+'-- Event Code
+!POBJ objComm.C='Play click sound(;)
+~IWAV sw_toggle3(;)
+' Configure connection(;)
+!PORT (drpComm),(drpBaud)(;)
+' Plot and Connect(;)
+!PLOT ((ME))(;)
+!CONN ((ME))(;)
+'Call buttons/Menu routine(;)
+' KJF added below(;)
+!IFTH ((ME)),==,0,!POBJ sStatus.text =           IDLE(CR)!POBJ sStatus.Back Color=12(CR)!POBJ sStatus.Text Color=15
+
+
+'   lbl_71_72_73_74 -- OLABEL *****
+!POBJ oLabel.lbl_71_72_73_74=90.1,35.7,10.,3., ,7,14,8,0
+!POBJ lbl_71_72_73_74.F=Arial,8,0,0,0
+
+'   startIn30 -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.startIn30=88.,35.9,11.,4.,Start in 30 sec,0,dev\pb-sw\pb_blu_0.gif,dev\pb-sw\pb_blu_1.gif,On-Off,1
+!POBJ startIn30.Font Size=5
+!POBJ startIn30.Font Color=&HFFFFFF
+!POBJ startIn30.Sound=sounds\sw_tick2.wav
+!POBJ startIn30.tip=Start plot in 30 sec
+
+'   aTime -- OTEXT *****
+!POBJ oText.aTime=88.7,58.8,9.,3.5, 03/05/2017  22:57,&H80FFFF,0,6
+!POBJ aTime.F=Arial,6,0,0,0
+
+'   voltMeter -- POCX:MP_GAUGE_HORIZ_OBJ *****
+!POBJ MP_GAUGE_HORIZ_OBJ.voltMeter=24.4,17.8,18.,16.,0, 5,Sensor Voltage,Blue-Gray,0,0
+!POBJ voltMeter.Sound=sounds\sw_tick2.wav
+!POBJ voltMeter.Value=  1.38
+!POBJ voltMeter.Decimals=2
+
+'   lbl_48 -- OLABEL *****
+!POBJ oLabel.lbl_48=88.1,89.9,11.1,3.,System Status,7,15,6,0
+!POBJ lbl_48.F=Arial,6,0,0,0
+
+'   pDate -- OTEXT *****
+!POBJ oText.pDate=85.4,16.7,6.,4.1, 03/06/2017,&H80FFFF,0,6
+!POBJ pDate.F=Arial,6,0,0,0
+!POBJ pDate.tip=Plot Start Date  (FST)
+
+'   pTime -- OTEXT *****
+!POBJ oText.pTime=92.3,16.7,5.,4.1,  1400,&H80FFFF,0,6
+!POBJ pTime.F=Arial,6,0,0,0
+!POBJ pTime.tip=Plot Start Time (pTimre)
+'-- Event Code
+!POBJ pTime.C=!POBJ pTimeEvent.value = 1
+
+
+'   sStatus -- OTEXT *****
+!POBJ oText.sStatus=89.1,94.3,9.,3.5,          IDLE,12,15,6
+!POBJ sStatus.F=Arial,6,1,0,0
+!POBJ sStatus.tip=IDLE, COUNTDOWN, PLOTTING, STOPPED
+
+'   untilStart -- OTEXT *****
+!POBJ oText.untilStart=89.1,45.3,8.,3.5,           ---,&H80FFFF,0,6
+!POBJ untilStart.F=Arial,6,0,0,0
+
+'   lbl_58_56 -- OLABEL *****
+!POBJ oLabel.lbl_58_56=84.,50.3,18.,3.,Countdown,7,15,8,0
+!POBJ lbl_58_56.F=Arial,8,1,0,0
+
+'   startAsPer -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.startAsPer=88.1,30.9,11.,4.,Start as per below...,0,dev\pb-sw\pb_blu_0.gif,dev\pb-sw\pb_blu_1.gif,On-Off,1
+!POBJ startAsPer.Font Size=5
+!POBJ startAsPer.Font Color=&HFFFFFF
+!POBJ startAsPer.Sound=sounds\sw_tick2.wav
+!POBJ startAsPer.tip=Plot start time taken from date & time fields below
+'-- Event Code
+!POBJ startAsPer.C=' get settings from registry based on plot title(;)
+!GSET (TITLE)
+
+
+'   pTimeEvent -- POCX:MP_IMGBTN_OBJ *****
+!POBJ MP_IMGBTN_OBJ.pTimeEvent=61.7,98.2,3.5,6., ,0,dev\leds\b_g_LED_red_0.gif,dev\leds\b_g_LED_red_1.gif,On-Off,1
+!POBJ pTimeEvent.tip=pTimeEvent
+
+'   stxt -- OSTEXT *****
+!POBJ oSText.stxt=70.1,100.4,17.,80.6, \n 22:56:37  EVENT LOG opened \n 22:56:37  Arduino s/w clock synced \n 22:56:37  Please enter plot start time \n 22:56:38  Software Clock Error: 1 sec \n 22:56:40  S/w Clock synced,15,0,5
+!POBJ stxt.F=Arial,5,0,0,0
+
+!POBJ stxt.tip=sText
+
+'   lbl_48_62 -- OLABEL *****
+!POBJ oLabel.lbl_48_62=58.1,90.9,11.1,3.,pTimeEvent,7,15,6,0
+!POBJ lbl_48_62.F=Arial,6,0,0,0
+
+'   lbl_48_62_63 -- OLABEL *****
+!POBJ oLabel.lbl_48_62_63=58.1,87.9,11.1,8.,(Turns on when\nPlot Start Time is\nis changed),7,15,6,0
+!POBJ lbl_48_62_63.F=Arial,6,0,0,0
+
+'   lbl_58_63_64_59 -- OLABEL *****
+!POBJ oLabel.lbl_58_63_64_59=85.6,19.3,18.,3.,HHMM,7,15,4,0
+!POBJ lbl_58_63_64_59.F=Arial,4,0,0,0
+
+' Timer 0 code and interval ********
+!POBJ oTimer0.C=!POBJ testLED2.value = 1
+!POBJ oTImer0= 0
+
+ENDMAC
+
+DCONST:
+!CLRC
+@TEXT 40A,107A,1.5A,9, SOLAR INTENSITY MONITOR                                                                         
+
+ENDMAC
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+ 
+
+
+
+
